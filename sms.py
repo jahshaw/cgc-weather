@@ -1,10 +1,9 @@
 from collections import namedtuple
-from datetime import date
-import pyowm
 from twilio.rest import TwilioRestClient
 import flask
 # NB:  keys.py is not committed to VC for obvious reasons :)
-from keys import TWILIO_NUMBER, TWILIO_ACC_ID, TWILIO_AUTH_TOKEN, OWM_API_KEY, TEST_NUM1, TEST_NUM2
+from keys import TWILIO_NUMBER, TWILIO_ACC_ID, TWILIO_AUTH_TOKEN, TEST_NUM1, TEST_NUM2
+import weather
 
 app = flask.Flask(__name__)
 
@@ -13,47 +12,7 @@ Member = namedtuple('Member', 'name, phone_num, role')
 CREW_LIST = {Member("James", TEST_NUM1, "Instructor"),
              Member("Jim", TEST_NUM2, "Student")}
 
-def get_weather_info():
-    """Make HTTP requests for the weather info and generate a text string with the output."""
 
-    try:
-        owm = pyowm.OWM(OWM_API_KEY)
-
-        # Get current weather in Cambridge
-        observation = owm.weather_at_place('Cambridge,uk')
-        w = observation.get_weather()
-
-        # Gather wind information
-        wind_speed = int(w.get_wind()['speed'] * 1.94)  # conversion from m/s to kts
-        wind_dir = int(w.get_wind()['deg'])
-        wind_msg = "Wind: " + wind_speed + "kt at " + wind_dir + "deg\n"
-
-        # Gather rain information
-        rain_vol = w.get_rain()['3h']  # returns rain volume in previous 3h
-        rain_msg = "Rain: " + rain_vol + "mm\n"
-
-        # Check visibility
-        vis = w.get_visibility_distance()
-        vis_msg = "Visibility: " + vis + "m\n"
-
-        # Assess the weather
-        if (wind_speed > 25
-            or rain_vol > 3
-            or vis < 5000):
-            status = "Not flyable."
-        elif (wind_speed > 15
-              or vis < 8000):
-            status = "Check with instructor."
-        else:
-            status = "Should be good."
-
-        header = "CGC weather info for " + date.today().strftime("%A %d %b") + ":\n"
-        message = header + wind_msg + rain_msg + vis_msg + status
-
-    except:
-        # todo better catch some errors...
-        message = "Hit an error.  The weather is probably rubbish!"
-    return message
 
 
 def start_gliding_day():
@@ -62,7 +21,7 @@ def start_gliding_day():
     # todo - currently mocked up in CREW_LIST, could grab this from the web?
 
     # Get today's weather information.
-    message = get_weather_info()
+    message = weather.get_weather_info()
 
     # Send out the weather notification.
     send_mass_sms(CREW_LIST, message)
@@ -98,9 +57,9 @@ def send_mass_sms(recipients, message):
     # Connect to Twilio and send the SMS to everyone in the list.
     client = TwilioRestClient(TWILIO_ACC_ID, TWILIO_AUTH_TOKEN)
     for person in recipients:
-        message = client.api.account.messages.create(to=person.phone_num,
-                                                     from_=TWILIO_NUMBER,
-                                                     body=message)
+        message = client.messages.create(to=person.phone_num,
+                                         from_=TWILIO_NUMBER,
+                                         body=message)
         #todo check errors that can be thrown
 
 
