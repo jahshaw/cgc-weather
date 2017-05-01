@@ -1,5 +1,5 @@
 from collections import namedtuple
-from twilio.rest import TwilioRestClient
+from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 import flask
 # NB:  keys.py is not committed to VC for obvious reasons :)
@@ -48,9 +48,9 @@ def receive_sms():
             instructors = [person for person in CREW_LIST if person.role == "Instructor"]
             send_mass_sms(instructors, message)
             response = "Message delivered"
-    except:
-        # todo check what error thrown
+    except Exception as e:
         # Most likely the sender wasn't found in the list.  Oh well...
+        print(repr(e))
         response = "Couldn't deliver message.  Are you on today's roster?"
 
     # Build and return the response to the message.
@@ -63,7 +63,7 @@ def receive_sms():
 
 def send_mass_sms(recipients, message):
     # Connect to Twilio and send the SMS to everyone in the list.
-    client = TwilioRestClient(TWILIO_ACC_ID, TWILIO_AUTH_TOKEN)
+    client = Client(TWILIO_ACC_ID, TWILIO_AUTH_TOKEN)
     for person in recipients:
         client.messages.create(to=person.phone_num,
                                from_=TWILIO_NUMBER,

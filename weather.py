@@ -46,8 +46,7 @@ def get_weather_info():
         message = header + wind_msg + rain_msg + vis_msg + status
 
     except Exception as e:
-        # todo better catch some errors...
-        print(e)
+        print(repr(e))
         message = "Hit an error.  The weather is probably rubbish!"
     return message
 
