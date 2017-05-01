@@ -23,6 +23,8 @@ def get_weather_info():
         rain = w.get_rain()
         if '3h' in rain:
             rain_vol = int(rain['3h'])  # returns rain volume in previous 3h
+        else:
+            rain_vol = 0
         rain_msg = "Rain: " + str(rain_vol) + "mm\n"
 
         # Check visibility

@@ -6,13 +6,12 @@ from keys import TWILIO_NUMBER, TWILIO_ACC_ID, TWILIO_AUTH_TOKEN, TEST_NUM1, TES
 import weather
 
 app = flask.Flask(__name__)
+app.secret_key = TWILIO_AUTH_TOKEN
 
 # Member info
 Member = namedtuple('Member', 'name, phone_num, role')
 CREW_LIST = {Member("James", TEST_NUM1, "Instructor"),
              Member("Jim", TEST_NUM2, "Student")}
-
-
 
 
 def start_gliding_day():
@@ -57,9 +56,9 @@ def send_mass_sms(recipients, message):
     # Connect to Twilio and send the SMS to everyone in the list.
     client = TwilioRestClient(TWILIO_ACC_ID, TWILIO_AUTH_TOKEN)
     for person in recipients:
-        message = client.messages.create(to=person.phone_num,
-                                         from_=TWILIO_NUMBER,
-                                         body=message)
+        client.messages.create(to=person.phone_num,
+                               from_=TWILIO_NUMBER,
+                               body=message)
         #todo check errors that can be thrown
 
 
