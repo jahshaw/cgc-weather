@@ -3,9 +3,15 @@ from datetime import date
 import pyowm
 from twilio-python import Client
 from flask import Flask
+# NB:  keys.py is not committed to VC for obvious reasons :)
+from keys import TWILIO_NUMBER, TWILIO_ACC_ID, TWILIO_AUTH_TOKEN, OWM_API_KEY, TEST_NUM1, TEST_NUM2
+
 app = Flask(__name__)
 
-
+# Member info
+Member = namedtuple('Member', 'name, phone_num, role')
+CREW_LIST = {Member("James", TEST_NUM1, "Instructor"),
+             Member("Jim", TEST_NUM2, "Student")}
 
 def get_weather_info():
     """Make HTTP requests for the weather info and generate a text string with the output."""
