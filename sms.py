@@ -1,7 +1,7 @@
 from collections import namedtuple
 from datetime import date
 import pyowm
-from twilio-python import Client
+from twilio.rest import TwilioRestClient
 from flask import Flask
 # NB:  keys.py is not committed to VC for obvious reasons :)
 from keys import TWILIO_NUMBER, TWILIO_ACC_ID, TWILIO_AUTH_TOKEN, OWM_API_KEY, TEST_NUM1, TEST_NUM2
@@ -106,18 +106,18 @@ def send_mass_sms(recipients, message):
 
 @app.route("/")
 def main_page():
-    return render_template('main_page.html')
+    return app.render_template('main_page.html')
 
 @app.route("/about")
 def about():
-    return render_template('about.html')
+    return app.render_template('about.html')
 
 @app.route("/start_day")
 def start_day():
     # Trigger business logic and go back to the main page.
     start_gliding_day()
-    flash("Started!")
-    return redirect(url_for('main_page'))
+    app.flash("Started!")
+    return app.redirect(app.url_for('main_page'))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
