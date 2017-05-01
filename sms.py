@@ -32,22 +32,22 @@ def receive_sms():
     received_message = flask.request.form['Body']
     received_num = flask.request.form['From']
 
-    # Identify the sender of the message.
-    sender = [person for person in CREW_LIST if person.phone_num == received_num]
-
     try:
+        # Identify the sender of the message (we assume no duplicates...)
+        sender = [person for person in CREW_LIST if person.phone_num == received_num][0]
+
         if sender.role == "Instructor":
             # If this text is from a duty instructor forward to all of today's crew.
-            announcement = "Notice from " + sender.name + ":\n" + received_message
+            announcement = "Announcement from " + sender.name + ":\n" + received_message
             recipients = [person for person in CREW_LIST if person != sender]
             send_mass_sms(recipients, announcement)
-            response = "Notice delivered"
+            response = "Announcement delivered!"
         else:
             # Otherwise forward it to the instructors.
             message = "Message from " + sender.name + ":\n" + received_message
             instructors = [person for person in CREW_LIST if person.role == "Instructor"]
             send_mass_sms(instructors, message)
-            response = "Message delivered"
+            response = "Message delivered!"
     except Exception as e:
         # Most likely the sender wasn't found in the list.  Oh well...
         print(repr(e))
