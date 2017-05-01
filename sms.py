@@ -2,11 +2,11 @@ from collections import namedtuple
 from datetime import date
 import pyowm
 from twilio.rest import TwilioRestClient
-from flask import Flask
+import flask
 # NB:  keys.py is not committed to VC for obvious reasons :)
 from keys import TWILIO_NUMBER, TWILIO_ACC_ID, TWILIO_AUTH_TOKEN, OWM_API_KEY, TEST_NUM1, TEST_NUM2
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
 # Member info
 Member = namedtuple('Member', 'name, phone_num, role')
@@ -96,7 +96,7 @@ def receive_sms():
 def send_mass_sms(recipients, message):
 
     # Connect to Twilio and send the SMS to everyone in the list.
-    client = Client(TWILIO_ACC_ID, TWILIO_AUTH_TOKEN)
+    client = TwilioRestClient(TWILIO_ACC_ID, TWILIO_AUTH_TOKEN)
     for person in recipients:
         message = client.api.account.messages.create(to=person.phone_num,
                                                      from_=TWILIO_NUMBER,
@@ -106,18 +106,18 @@ def send_mass_sms(recipients, message):
 
 @app.route("/")
 def main_page():
-    return app.render_template('main_page.html')
+    return flask.render_template('main_page.html')
 
 @app.route("/about")
 def about():
-    return app.render_template('about.html')
+    return flask.render_template('about.html')
 
 @app.route("/start_day")
 def start_day():
     # Trigger business logic and go back to the main page.
     start_gliding_day()
-    app.flash("Started!")
-    return app.redirect(app.url_for('main_page'))
+    flask.flash("Started!")
+    return flask.redirect(flask.url_for('main_page'))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
