@@ -1,5 +1,6 @@
 from collections import namedtuple
 from twilio.rest import TwilioRestClient
+from twilio.twiml.messaging_response import MessagingResponse
 import flask
 # NB:  keys.py is not committed to VC for obvious reasons :)
 from keys import TWILIO_NUMBER, TWILIO_ACC_ID, TWILIO_AUTH_TOKEN, TEST_NUM1, TEST_NUM2
@@ -28,8 +29,8 @@ def start_gliding_day():
 
 @app.route('/new_sms', methods=['POST'])
 def receive_sms():
-    received_message = Flask.request.form['Body']
-    received_num = Flask.request.form['From']
+    received_message = flask.request.form['Body']
+    received_num = flask.request.form['From']
 
     # Identify the sender of the message.
     sender = [person for person in CREW_LIST if person.phone_num == received_num]
@@ -40,19 +41,27 @@ def receive_sms():
             announcement = "Notice from " + sender.name + ":\n" + received_message
             recipients = [person for person in CREW_LIST if person != sender]
             send_mass_sms(recipients, announcement)
+            response = "Notice delivered"
         else:
             # Otherwise forward it to the instructors.
             message = "Message from " + sender.name + ":\n" + received_message
             instructors = [person for person in CREW_LIST if person.role == "Instructor"]
             send_mass_sms(instructors, message)
+            response = "Message delivered"
     except:
         # todo check what error thrown
         # Most likely the sender wasn't found in the list.  Oh well...
-        pass
+        response = "Couldn't deliver message.  Are you on today's roster?"
+
+    # Build and return the response to the message.
+    rsp = MessagingResponse()
+    rsp.message(to=received_num,
+                from_=TWILIO_NUMBER,
+                body=response)
+    return str(rsp)
 
 
 def send_mass_sms(recipients, message):
-
     # Connect to Twilio and send the SMS to everyone in the list.
     client = TwilioRestClient(TWILIO_ACC_ID, TWILIO_AUTH_TOKEN)
     for person in recipients:
@@ -66,9 +75,11 @@ def send_mass_sms(recipients, message):
 def main_page():
     return flask.render_template('main_page.html')
 
+
 @app.route("/about")
 def about():
     return flask.render_template('about.html')
+
 
 @app.route("/start_day")
 def start_day():
@@ -76,6 +87,7 @@ def start_day():
     start_gliding_day()
     flask.flash("Started!")
     return flask.redirect(flask.url_for('main_page'))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
