@@ -20,7 +20,9 @@ def get_weather_info():
         wind_msg = "Wind: " + str(wind_speed) + "kt at " + str(wind_dir) + "deg\n"
 
         # Gather rain information
-        rain_vol = int(w.get_rain()['3h'])  # returns rain volume in previous 3h
+        rain = w.get_rain()
+        if '3h' in rain:
+            rain_vol = int(rain['3h'])  # returns rain volume in previous 3h
         rain_msg = "Rain: " + str(rain_vol) + "mm\n"
 
         # Check visibility
