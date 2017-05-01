@@ -17,15 +17,15 @@ def get_weather_info():
         # Gather wind information
         wind_speed = int(w.get_wind()['speed'] * 1.94)  # conversion from m/s to kts
         wind_dir = int(w.get_wind()['deg'])
-        wind_msg = "Wind: " + wind_speed + "kt at " + wind_dir + "deg\n"
+        wind_msg = "Wind: " + str(wind_speed) + "kt at " + str(wind_dir) + "deg\n"
 
         # Gather rain information
-        rain_vol = w.get_rain()['3h']  # returns rain volume in previous 3h
-        rain_msg = "Rain: " + rain_vol + "mm\n"
+        rain_vol = int(w.get_rain()['3h'])  # returns rain volume in previous 3h
+        rain_msg = "Rain: " + str(rain_vol) + "mm\n"
 
         # Check visibility
-        vis = w.get_visibility_distance()
-        vis_msg = "Visibility: " + vis + "m\n"
+        vis = int(w.get_visibility_distance())
+        vis_msg = "Visibility: " + str(vis) + "m\n"
 
         # Assess the weather
         if (wind_speed > 25
