@@ -4,7 +4,12 @@
 <div class="starter-template">
   <h1>Bootstrap starter template</h1>
   <p class="lead">Click below to trigger application.</p>
-  <a class="btn btn-lg btn-primary" href="start_day" role="button">Simulate start of new gliding day</a>
+
+  <form class="form-inline" action="start_day" method="POST">
+    <textarea class="form-control" rows="5" id="comment"></textarea>
+    <button type="submit" class="btn">Simulate start of new gliding day</button>
+  </form>
+
 </div>
 
 {% endblock %}

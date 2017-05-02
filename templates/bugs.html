@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="starter-template">
+  <h1>Bugs/Feedback</h1>
+  <p class="lead"></p>
+
+
+  <h2>Bugs</h2>
+  <p>I found one minor bug in the SMS Dashboard/Voice Dashboard (screenshot below).  The times reported for error events in this view are not correct - they show as having occurred 8 hours ago, although the events occurred a few minutes before the screenshot was taken.  I am in the UK (8 hours ahead of California) so perhaps the UI is erroneously using the local time recorded by a CA-based server?</p>
+  <img src="static/bug_screenshot.png">
+  <p>Extra debugging info associated with one of the highlighted events:</p>
+  <pre>
+  DEBUG EVENT SID
+  NOf8008b38b4de90c38b6b212b54b9a10a
+  SERVICE SID
+  RESOURCE SID
+  SM025b84ebeddad3a950f78fda1b02329c
+  TIMESTAMP
+  2017-05-01 18:38:08 UTC
+  MESSAGE
+  HTTP retrieval failure</pre>
+</div>
+
+{% endblock %}

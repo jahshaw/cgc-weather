@@ -11,14 +11,18 @@ app.secret_key = TWILIO_AUTH_TOKEN
 
 # Member info
 Member = namedtuple('Member', 'name, phone_num, role')
-CREW_LIST = {Member("James", TEST_NUM1, "Instructor"),
-             Member("Jim", TEST_NUM2, "Student")}
+#CREW_LIST = {Member("James", TEST_NUM1, "Instructor"),
+#             Member("Jim", TEST_NUM2, "Student")}
+CREW_LIST = {}
 
 
-def start_gliding_day():
+def start_gliding_day(form_data):
 
     # Get the list of today's crew and their roles.
     # todo - currently mocked up in CREW_LIST, could grab this from the web?
+    for member in form_data.split('\n'):
+        name, number, role = member.split(',', 2)
+        CREW_LIST.add(Member(name, number, role))
 
     # Get today's weather information.
     message = weather.get_weather_info()
@@ -81,10 +85,16 @@ def about():
     return flask.render_template('about.html')
 
 
-@app.route("/start_day")
+@app.route("/bugs")
+def bugs():
+    return flask.render_template('bugs.html')
+
+
+@app.route("/start_day", methods=['POST'])
 def start_day():
+    form_data = flask.request.form['Body']
     # Trigger business logic and go back to the main page.
-    start_gliding_day()
+    start_gliding_day(form_data)
     flask.flash("Started!")
     return flask.redirect(flask.url_for('main_page'))
 
