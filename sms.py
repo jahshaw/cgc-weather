@@ -92,7 +92,7 @@ def bugs():
 
 @app.route("/start_day", methods=['POST'])
 def start_day():
-    form_data = flask.request.form['Body']
+    form_data = flask.request.form['user_data']
     # Trigger business logic and go back to the main page.
     start_gliding_day(form_data)
     flask.flash("Started!")
