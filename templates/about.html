@@ -2,8 +2,7 @@
 {% block body %}
 
 <div class="starter-template">
-  <h1>About App</h1>
-  <p class="lead">James built this.  Hire him!</p>
+  <h1>About the App</h1>
   <h2>Purpose</h2>
   <p>The CGC Weather app helps members of the Cambridge Gliding Club co-ordinate their activity to ensure they do not travel to the airfield if the weather is unlikely to be good for flying.</p>
 
@@ -11,7 +10,12 @@
   <p>After this initial SMS notification has been sent, the service acts as a message forwarder - students can send messages to the instructors (e.g. to ask if flying is going ahead), whilst instructors can send announcements to everyone flying that day (e.g. to make a go/no-go decision).</p>
 
   <h2>Demo operation</h2>
-  <p>Input the new member data and select 'Start new gliding day' (this is a mock-up).  This will trigger the initial SMS notification to members.  Afterwards, text the service from an instructor and a student and see the messages being forwarded.</p>
+  <p>Go <a href="/demo">here</a> to test the application.</p>
+  <p>Input the new member data and select 'Start new gliding day' (this is a mock-up interface for demo purposes - a real application would load this from a database).  This will trigger the initial SMS notification to members you have registered.  Afterwards, text the service from an instructor and a student and see the messages being forwarded.</p>
+
+  <h2>Technical</h2>
+  <p>This proof-of-concept was built using Flask as the web server and Bootstrap for styling.  Messaging functionality provided by Twilio.</p>
+  <p>Code is visible on <a href="https://github.com/jahshaw/cgc-weather">GitHub</a>.</p>
 
 </div>
 

@@ -11,18 +11,18 @@ app.secret_key = TWILIO_AUTH_TOKEN
 
 # Member info
 Member = namedtuple('Member', 'name, phone_num, role')
-#CREW_LIST = {Member("James", TEST_NUM1, "Instructor"),
-#             Member("Jim", TEST_NUM2, "Student")}
 CREW_LIST = []
 
 
 def start_gliding_day(form_data):
 
     # Get the list of today's crew and their roles.
-    # todo - currently mocked up in CREW_LIST, could grab this from the web?
     for member in form_data.split('\n'):
-        name, number, role = member.split(',', 2)
-        CREW_LIST.append(Member(name, number, role))
+        try:
+            name, number, role = member.split(',', 2)
+            CREW_LIST.append(Member(name, number, role))
+        except:
+            pass  # just ignore errors for now as this is a mockup
 
     # Get today's weather information.
     message = weather.get_weather_info()
@@ -75,11 +75,12 @@ def send_mass_sms(recipients, message):
         #todo check errors that can be thrown
 
 
-@app.route("/")
+@app.route("/demo")
 def main_page():
     return flask.render_template('main_page.html')
 
 
+@app.route("/")
 @app.route("/about")
 def about():
     return flask.render_template('about.html')

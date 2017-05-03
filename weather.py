@@ -38,9 +38,9 @@ def get_weather_info():
             status = "Not flyable."
         elif (wind_speed > 15
               or vis < 8000):
-            status = "Check with instructor."
+            status = "Marginal - check with instructor."
         else:
-            status = "Should be good."
+            status = "Should be flyable."
 
         header = "CGC weather info for " + date.today().strftime("%A %d %b") + ":\n"
         message = header + wind_msg + rain_msg + vis_msg + status
