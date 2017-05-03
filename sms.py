@@ -5,9 +5,11 @@ import flask
 # NB:  keys.py is not committed to VC for obvious reasons :)
 from keys import TWILIO_NUMBER, TWILIO_ACC_ID, TWILIO_AUTH_TOKEN, TEST_NUM1, TEST_NUM2
 import weather
+import logging
 
 app = flask.Flask(__name__)
 app.secret_key = TWILIO_AUTH_TOKEN
+log = logging.getLogger(__name__)
 
 # Member info
 Member = namedtuple('Member', 'name, phone_num, role')
@@ -25,7 +27,7 @@ def start_gliding_day(form_data):
                                 str(role.strip(' "\r')))
 
             CREW_LIST.append(new_member)
-            print("Added member " + repr(new_member))
+            log.debug("Added member " + repr(new_member))
         except:
             pass  # just ignore errors for now as this is a mockup
 
@@ -41,9 +43,12 @@ def receive_sms():
     received_message = flask.request.form['Body']
     received_num = flask.request.form['From']
 
+    log.debug("Received SMS from " + str(received_num))
+
     try:
         # Identify the sender of the message (we assume no duplicates...)
         sender = [person for person in CREW_LIST if person.phone_num == received_num][0]
+        log.debug("Sender is " + str(sender.name))
 
         if sender.role == "Instructor":
             # If this text is from a duty instructor forward to all of today's crew.
@@ -59,7 +64,7 @@ def receive_sms():
             response = "Message delivered!"
     except Exception as e:
         # Most likely the sender wasn't found in the list.  Oh well...
-        print(repr(e))
+        log.error(repr(e))
         response = "Couldn't deliver message.  Are you on today's roster?"
 
     # Build and return the response to the message.
@@ -74,6 +79,7 @@ def send_mass_sms(recipients, message):
     # Connect to Twilio and send the SMS to everyone in the list.
     client = Client(TWILIO_ACC_ID, TWILIO_AUTH_TOKEN)
     for person in recipients:
+        log.debug("Sending message to " + str(person.name))
         client.messages.create(to=person.phone_num,
                                from_=TWILIO_NUMBER,
                                body=message)
@@ -106,4 +112,9 @@ def start_day():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        format="%(asctime)-15s %(threadName)-26.26s %(levelname)-8s %(funcName)-20.20s %(message)s",
+        filename="cgc-weather.log",
+        level=logging.DEBUG)
+
     app.run(host="0.0.0.0", debug=True)
