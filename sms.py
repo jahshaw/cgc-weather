@@ -20,7 +20,12 @@ def start_gliding_day(form_data):
     for member in form_data.split('\n'):
         try:
             name, number, role = member.split(',', 2)
-            CREW_LIST.append(Member(name, number, role))
+            new_member = Member(str(name.strip(' "\r')),
+                                str(number.strip(' "\r')),
+                                str(role.strip(' "\r')))
+
+            CREW_LIST.append(new_member)
+            print("Added member " + repr(new_member))
         except:
             pass  # just ignore errors for now as this is a mockup
 
